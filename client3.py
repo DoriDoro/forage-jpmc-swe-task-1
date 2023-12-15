@@ -29,32 +29,49 @@ QUERY = "http://localhost:8080/query?id={}"
 N = 500
 
 
-def getDataPoint(quote):
-    """ Produce all the needed values to generate a datapoint """
+def get_data_point(single_quote):
+    """Produce all the needed values to generate a datapoint"""
 
-    stock = quote['stock']
-    bid_price = float(quote['top_bid']['price'])
-    ask_price = float(quote['top_ask']['price'])
-    price = (bid_price + ask_price) / 2
-    return stock, bid_price, ask_price, price
+    data_stock = single_quote["stock"]
+    data_bid_price = float(single_quote["top_bid"]["price"])
+    data_ask_price = float(single_quote["top_ask"]["price"])
+    data_price = round((data_bid_price + data_ask_price) / 2, 2)
+
+    # check if single_quote["top_bid"]["price"] or single_quote["top_ask"]["price"] is 0, None or NaN:
+    for s_q in single_quote.values():
+        if isinstance(s_q, dict):
+            for value in s_q.values():
+                if value is None:
+                    raise ValueError(f"{value} is not defined.")
+                if value == 0:
+                    raise ValueError(f"{s_q} value: {value} is 0.")
+                if not isinstance(value, (int, float)):
+                    raise ValueError(f"{value} is not a number.")
+
+    return data_stock, data_bid_price, data_ask_price, data_price
 
 
-def getRatio(price_a, price_b):
-    """ Get ratio of price_a and price_b """
+def get_ratio(price_a, price_b):
+    """Get ratio of price_a and price_b"""
 
-    return price_a/price_b if price_b else 0
+    return round(price_a / price_b, 4) if price_b else 0
 
 
 # Main
 if __name__ == "__main__":
     # Query the price once every N seconds.
     for _ in iter(range(N)):
-        quotes = json.loads(urllib.request.urlopen(QUERY.format(random.random())).read())
+        quotes = json.loads(
+            urllib.request.urlopen(QUERY.format(random.random())).read()
+        )
 
         all_prices = {}
         for quote in quotes:
-            stock, bid_price, ask_price, price = getDataPoint(quote)
+            stock, bid_price, ask_price, price = get_data_point(quote)
             all_prices[stock] = price
-            print("Quoted %s at (bid:%s, ask:%s, price:%s)" % (stock, bid_price, ask_price, price))
+            print(
+                "Quoted %s at (bid:%s, ask:%s, price:%s)"
+                % (stock, bid_price, ask_price, price)
+            )
 
-        print("Ratio %s" % getRatio(all_prices['ABC'], all_prices['DEF']))
+        print("Ratio %s" % get_ratio(all_prices["ABC"], all_prices["DEF"]))

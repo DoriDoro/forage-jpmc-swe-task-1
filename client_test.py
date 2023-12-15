@@ -1,5 +1,5 @@
 import unittest
-from client3 import getDataPoint
+from client3 import get_data_point
 
 
 class ClientTest(unittest.TestCase):
@@ -23,7 +23,7 @@ class ClientTest(unittest.TestCase):
         """ ------------ Add the assertion below ------------ """
         for quote in quotes:
             self.assertEqual(
-                getDataPoint(quote),
+                get_data_point(quote),
                 (
                     quote["stock"],
                     quote["top_bid"]["price"],
@@ -52,7 +52,7 @@ class ClientTest(unittest.TestCase):
         """ ------------ Add the assertion below ------------ """
         for quote in quotes:
             self.assertEqual(
-                getDataPoint(quote),
+                get_data_point(quote),
                 (
                     quote["stock"],
                     quote["top_bid"]["price"],
@@ -81,7 +81,7 @@ class ClientTest(unittest.TestCase):
             },
         ]
         for quote in quotes:
-            getDataPoint(quote)
+            get_data_point(quote)
             self.assertEquals(quote["top_ask"]["price"], 0)
 
     def test_getDataPoint_raiseErrorForInvalidInput(self):
@@ -101,7 +101,7 @@ class ClientTest(unittest.TestCase):
         ]
         for quote in quotes:
             with self.assertRaises(KeyError):
-                getDataPoint(quote)
+                get_data_point(quote)
 
     def test_getDataPoint_raiseErrorForNonNumericPrice(self):
         quotes = [
@@ -122,7 +122,7 @@ class ClientTest(unittest.TestCase):
         ]
         for quote in quotes:
             with self.assertRaises(ValueError):
-                getDataPoint(quote)
+                get_data_point(quote)
 
 
 if __name__ == "__main__":
