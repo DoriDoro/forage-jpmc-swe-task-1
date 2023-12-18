@@ -28,7 +28,12 @@ class ClientTest(unittest.TestCase):
                     quote["stock"],
                     quote["top_bid"]["price"],
                     quote["top_ask"]["price"],
-                    ((quote["top_bid"]["price"] + quote["top_ask"]["price"]) / 2),
+                    (
+                        round(
+                            (quote["top_bid"]["price"] + quote["top_ask"]["price"]) / 2,
+                            2,
+                        )
+                    ),
                 ),
             )
 
@@ -57,7 +62,12 @@ class ClientTest(unittest.TestCase):
                     quote["stock"],
                     quote["top_bid"]["price"],
                     quote["top_ask"]["price"],
-                    ((quote["top_bid"]["price"] + quote["top_ask"]["price"]) / 2),
+                    (
+                        round(
+                            (quote["top_bid"]["price"] + quote["top_ask"]["price"]) / 2,
+                            2,
+                        )
+                    ),
                 ),
             )
 
@@ -81,8 +91,8 @@ class ClientTest(unittest.TestCase):
             },
         ]
         for quote in quotes:
-            get_data_point(quote)
-            self.assertEquals(quote["top_ask"]["price"], 0)
+            with self.assertRaises(ValueError):
+                get_data_point(quote)
 
     def test_getDataPoint_raiseErrorForInvalidInput(self):
         quotes = [
