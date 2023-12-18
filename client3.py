@@ -40,13 +40,14 @@ def get_data_point(single_quote):
     # check if single_quote["top_bid"]["price"] or single_quote["top_ask"]["price"] is 0, None or NaN:
     for s_q in single_quote.values():
         if isinstance(s_q, dict):
-            for value in s_q.values():
-                if value is None:
-                    raise ValueError(f"{value} is not defined.")
-                if value == 0:
-                    raise ValueError(f"{s_q} value: {value} is 0.")
-                if not isinstance(value, (int, float)):
-                    raise ValueError(f"{value} is not a number.")
+            for key, value in s_q.items():
+                if key == "price":
+                    if value is None:
+                        raise ValueError(f"{value} is not defined.")
+                    if value == 0:
+                        raise ValueError(f"{value} is 0.")
+                    if not isinstance(value, (int, float)):
+                        raise ValueError(f"{value} is not a number.")
 
     return data_stock, data_bid_price, data_ask_price, data_price
 
@@ -70,8 +71,8 @@ if __name__ == "__main__":
             stock, bid_price, ask_price, price = get_data_point(quote)
             all_prices[stock] = price
             print(
-                "Quoted %s at (bid:%s, ask:%s, price:%s)"
+                "Quoted %s at (bid: %s, ask: %s, price: %s)"
                 % (stock, bid_price, ask_price, price)
             )
 
-        print("Ratio %s" % get_ratio(all_prices["ABC"], all_prices["DEF"]))
+        print("Ratio %s" % get_ratio(all_prices["ABC"], all_prices["DEF"]), end="\n\n")
